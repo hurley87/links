@@ -31,9 +31,11 @@ const relay = new GelatoRelay();
 type UpvoteProps = {
   project: Project;
   setUpvotes: (upvotes: number) => void;
+  setBalance: (balance: number) => void;
+  balance: number;
 };
 
-const Upvote = ({ project, setUpvotes }: UpvoteProps) => {
+const Upvote = ({ project, setUpvotes, setBalance, balance }: UpvoteProps) => {
   const [user, _]: any = useContext(UserContext);
   const votingContract = wagmi.useContract({
     address: '0xd4435f714C5aC18d993F0aBBc9829ebE80E9e642',
@@ -119,6 +121,7 @@ const Upvote = ({ project, setUpvotes }: UpvoteProps) => {
                   setIsLoading(false);
                   toast.success('Link upvoted!');
                   setUpvotes(project.upvotes.toNumber() + 1);
+                  setBalance(balance + 1);
                   return;
                 } else if (taskStatus?.taskState === 'CheckPending') {
                   if (

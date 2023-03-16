@@ -35,7 +35,7 @@ const Projects = () => {
   // console.log(user);
   return (
     <>
-      <Stack gap={2} py="4">
+      <Stack gap={3} py="4">
         {isLoading && <ProjectsLoading />}
         {projects
           ?.sort(
