@@ -3,7 +3,7 @@ import { Skeleton, Stack } from '@chakra-ui/react';
 
 const ProjectsLoading = () => {
   return (
-    <Stack gap={4} pl="8">
+    <Stack gap={4} pl="2">
       {[1, 2, 3, 4, 5, 6].map((i) => (
         <Stack key={i} gap="0">
           <Skeleton w="140px" h="24px" />

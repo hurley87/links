@@ -7,7 +7,7 @@ import { gelato } from '@/lib/gelato';
 
 // function to format user wallet address
 const formatAddress = (address: string) => {
-  return address ? `${address.slice(0, 4)}...${address.slice(-2)}` : '';
+  return address ? `${address.slice(0, 4)}...${address.slice(-4)}` : '';
 };
 
 const Navbar = () => {
@@ -91,10 +91,8 @@ const Navbar = () => {
             cursor="pointer"
           >
             <HStack spacing="1">
-              <Badge bg="orange.300" color="orange.800">
-                {user.balance}
-              </Badge>
               <Text>{formatAddress(user.address)}</Text>
+              <Badge colorScheme="orange">{user.balance}</Badge>
             </HStack>
           </Link>
           <Text>|</Text>

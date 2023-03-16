@@ -1,7 +1,9 @@
+import useClubContract from '@/hooks/contracts/useClubContract';
 import { Project } from '@/hooks/contracts/useVotingContract';
-import { Box, Flex, HStack, Link, Stack, Text } from '@chakra-ui/react';
+import { UserContext } from '@/lib/UserContext';
+import { Badge, Box, Flex, HStack, Link, Stack, Text } from '@chakra-ui/react';
 import moment from 'moment';
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Upvote from './Upvote';
 
 // function to format user wallet address
@@ -11,6 +13,25 @@ const formatAddress = (address: string) => {
 
 const ProjectCard = ({ project }: { project: Project }) => {
   const [upvotes, setUpvotes] = useState(project?.upvotes?.toNumber() || 0);
+  const [user, setUser]: any = useContext(UserContext);
+  const contract = useClubContract(user?.signer, user?.provider);
+  const [isFetched, setIsFetched] = useState(false);
+  const [balance, setBalance] = useState(0);
+
+  useEffect(() => {
+    const fetchBalance = async () => {
+      if (contract && project?.creatorAddress) {
+        const balanceReturned = await contract.getBalance(
+          project?.creatorAddress
+        );
+        const balance = parseInt(balanceReturned);
+        setBalance(balance);
+        setIsFetched(true);
+      }
+    };
+    if (!isFetched) fetchBalance();
+  }, [contract, isFetched, project]);
+
   return (
     <>
       <Stack>
@@ -35,17 +56,21 @@ const ProjectCard = ({ project }: { project: Project }) => {
                   {upvotes} {upvotes === 1 ? 'upvote' : 'upvotes'}
                 </Text>
                 <Text fontSize="xs">|</Text>
-                <Text fontSize="xs" pb="0" mt="0">
-                  submitted{' '}
-                  {moment(project?.timestamp.toNumber() * 1000).fromNow()} by{' '}
+                <HStack fontSize="xs" pb="0" mt="0" spacing="1">
+                  <Text>
+                    submitted{' '}
+                    {moment(project?.timestamp.toNumber() * 1000).fromNow()} by{' '}
+                  </Text>
+
                   <Link
-                    href={`https://base-goerli.blockscout.com/address/${project?.creatorAddress}`}
+                    href={`https://base-goerli.blockscout.com/address/${project?.creatorAddress}?tab=token_transfers`}
                     target="_blank"
                     fontSize={['xs', 'xs', 'xs']}
                   >
                     {formatAddress(project?.creatorAddress)}
                   </Link>
-                </Text>
+                  <Badge colorScheme="orange">{balance}</Badge>
+                </HStack>
               </HStack>
             </Box>
           </Stack>
