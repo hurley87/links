@@ -93,7 +93,7 @@ const CreateProject = () => {
     }
   };
   return (
-    <Box maxW="lg" p="8">
+    <Box maxW="lg" px="2" py="4">
       <form onSubmit={handleSubmit}>
         <Stack gap="1">
           <HStack id="role">
@@ -130,7 +130,7 @@ const CreateProject = () => {
           </HStack>
         </Stack>
       </form>
-      <Text p="8">
+      <Text fontSize="sm" p="8">
         Submit a link you find valuable. Each time someone upvotes your link{' '}
         {" you'll "}
         get 1 CLUB token.{' '}

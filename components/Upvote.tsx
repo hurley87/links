@@ -21,23 +21,22 @@ import ClubContract from '../hooks/contracts/Club.json';
 import VotingContract from '../hooks/contracts/Voting.json';
 import * as wagmi from 'wagmi';
 import { GelatoRelay } from '@gelatonetwork/relay-sdk';
-import { ethers } from 'ethers';
 import { makeBig } from '@/lib/number-utils';
+import { gelato } from '@/lib/gelato';
 
 const relay = new GelatoRelay();
 
 const Upvote = ({ project }: { project: Project }) => {
   const [user, _]: any = useContext(UserContext);
-  const [upvoteCount, setUpvoteCount] = useState(0);
   const votingContract = wagmi.useContract({
     address: '0xF8ac8A09d6Ce1f2b68e9EBC0d5d42f91E8a758bC',
     abi: VotingContract.abi,
-    signerOrProvider: user.signer,
+    signerOrProvider: user?.signer,
   });
   const clubContract = wagmi.useContract({
     address: '0xE9A46d9865C4dDD8b15be9D6b4eE7732E27A1878',
     abi: ClubContract.abi,
-    signerOrProvider: user.signer,
+    signerOrProvider: user?.signer,
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -148,18 +147,34 @@ const Upvote = ({ project }: { project: Project }) => {
     }
   };
 
+  const toggleUpvote = async () => {
+    try {
+      if (!gelato) {
+        return;
+      }
+      if (!user?.signer) {
+        await gelato.login();
+      } else {
+        handleUpvote();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <Button
-        onClick={handleUpvote}
+        onClick={toggleUpvote}
         isLoading={isLoading}
         size="sm"
         colorScheme="orange"
         variant="ghost"
         h="full"
+        p="0"
       >
         <Stack gap="0" spacing="0">
-          <FaCaretUp fontSize="25px" />
+          <FaCaretUp fontSize="23px" />
         </Stack>
       </Button>
     </>

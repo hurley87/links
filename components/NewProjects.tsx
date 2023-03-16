@@ -7,7 +7,7 @@ import VotingContract from '../hooks/contracts/Voting.json';
 import * as wagmi from 'wagmi';
 import { Project } from '@/hooks/contracts/useVotingContract';
 
-const Projects = () => {
+const NewProjects = () => {
   const [user, _]: any = useContext(UserContext);
   const [isLoading, setIsLoading] = useState(false);
   const [projects, setProjects] = useState<any>([]);
@@ -40,10 +40,10 @@ const Projects = () => {
         {projects
           ?.sort(
             (
-              a: { upvotes: { toNumber: () => number } },
-              b: { upvotes: { toNumber: () => number } }
+              a: { timestamp: { toNumber: () => number } },
+              b: { timestamp: { toNumber: () => number } }
             ) => {
-              return b.upvotes.toNumber() - a.upvotes.toNumber();
+              return b.timestamp.toNumber() - a.timestamp.toNumber();
             }
           )
           .map((project: any, i: number) => (
@@ -54,4 +54,4 @@ const Projects = () => {
   );
 };
 
-export default Projects;
+export default NewProjects;

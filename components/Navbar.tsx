@@ -52,7 +52,7 @@ const Navbar = () => {
       bg="orange.800"
       color="orange.200"
     >
-      <HStack gap={2}>
+      <HStack gap={1}>
         <NextLink href="/" passHref>
           <Text
             transition="all 200ms linear"
@@ -65,7 +65,7 @@ const Navbar = () => {
           </Text>
         </NextLink>
         <HStack spacing={1}>
-          <NextLink href="/" passHref>
+          <NextLink href="/new" passHref>
             <Text fontSize="sm">new</Text>
           </NextLink>
           <Text>|</Text>

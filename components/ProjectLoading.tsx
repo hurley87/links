@@ -1,16 +1,13 @@
 import React from 'react';
-import { Flex, Skeleton, Stack } from '@chakra-ui/react';
+import { Skeleton, Stack } from '@chakra-ui/react';
 
 const ProjectsLoading = () => {
   return (
-    <Stack gap={6}>
-      {[1, 2].map((i) => (
-        <Stack key={i} backgroundColor="white" rounded="lg" gap="0">
+    <Stack gap={4} pl="8">
+      {[1, 2, 3, 4, 5, 6].map((i) => (
+        <Stack key={i} gap="0">
           <Skeleton w="140px" h="24px" />
-          <Skeleton w="100%" h="24px" />
-          <Flex>
-            <Skeleton w="100px" h="20px" pt="2" />
-          </Flex>
+          <Skeleton w="440px" h="20px" />
         </Stack>
       ))}
     </Stack>

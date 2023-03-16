@@ -1,13 +1,5 @@
 import { Project } from '@/hooks/contracts/useVotingContract';
-import {
-  Box,
-  Flex,
-  HStack,
-  Link,
-  Stack,
-  Text,
-  useDisclosure,
-} from '@chakra-ui/react';
+import { Box, Flex, HStack, Link, Stack, Text } from '@chakra-ui/react';
 import moment from 'moment';
 import Upvote from './Upvote';
 
