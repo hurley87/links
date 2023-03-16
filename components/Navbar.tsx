@@ -64,7 +64,7 @@ const Navbar = () => {
             }}
             fontWeight="black"
           >
-            Club Links
+            ClubLink
           </Text>
         </NextLink>
         <HStack spacing={1}>
