@@ -198,7 +198,7 @@ const Upvote = ({ project, setUpvotes, setBalance, balance }: UpvoteProps) => {
         p="0"
       >
         <Stack gap="0" spacing="0">
-          <FaCaretUp fontSize="23px" />
+          <FaCaretUp fontSize="21px" />
         </Stack>
       </Button>
       <Modal size={'sm'} isOpen={isOpen} onClose={onClose}>
