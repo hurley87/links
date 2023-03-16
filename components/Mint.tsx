@@ -1,24 +1,19 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Button } from '@chakra-ui/react';
 import ClubContract from '../hooks/contracts/Club.json';
 import * as wagmi from 'wagmi';
 import { GelatoRelay } from '@gelatonetwork/relay-sdk';
-import { ethers } from 'ethers';
 import { makeBig } from '@/lib/number-utils';
+import { UserContext } from '@/lib/UserContext';
 
 const relay = new GelatoRelay();
 
-const Mint = ({
-  signer,
-  web3AuthProvider,
-}: {
-  signer: any;
-  web3AuthProvider: any;
-}) => {
+const Mint = () => {
+  const [user, _]: any = useContext(UserContext);
   const signerContract = wagmi.useContract({
     address: '0xE9A46d9865C4dDD8b15be9D6b4eE7732E27A1878',
     abi: ClubContract.abi,
-    signerOrProvider: signer,
+    signerOrProvider: user.signer,
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -35,22 +30,16 @@ const Mint = ({
         chainId: 84531,
         target: '0xE9A46d9865C4dDD8b15be9D6b4eE7732E27A1878',
         data: data,
-        user: await signer.getAddress(),
+        user: await user.signer.getAddress(),
       };
 
       console.log('request2', request);
 
       const apiKey = process.env.NEXT_PUBLIC_GELATO_API_KEY as string;
 
-      console.log(apiKey);
-
-      console.log('web3AuthProvider', web3AuthProvider);
-
-      const provider = new ethers.providers.Web3Provider(web3AuthProvider);
-
       const response = await relay.sponsoredCallERC2771(
         request,
-        provider,
+        user.provider,
         apiKey
       );
       console.log('response', response);

@@ -14,7 +14,7 @@ const createGelato = () => {
             'https://fabled-proportionate-grass.base-goerli.quiknode.pro/43a2893a730d0ac6376b0fbd184c18c94d408504/',
         },
         ui: {
-          theme: 'dark',
+          theme: 'light',
         },
         openLogin: {
           redirectUrl: `${window.location.origin}`,

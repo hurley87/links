@@ -1,70 +1,62 @@
-import { Project } from '@/hooks/useVotingContract';
+import { Project } from '@/hooks/contracts/useVotingContract';
 import {
   Box,
-  Button,
   Flex,
   HStack,
   Link,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalOverlay,
-  Spacer,
   Stack,
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
+import moment from 'moment';
 import Upvote from './Upvote';
 
-const ProjectCard = ({
-  signer,
-  web3AuthProvider,
-  project,
-}: {
-  signer: any;
-  web3AuthProvider: any;
-  project: Project;
-}) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+// function to format user wallet address
+const formatAddress = (address: string) => {
+  return address ? `${address.slice(0, 6)}...${address.slice(-4)}` : '';
+};
 
+const ProjectCard = ({ project }: { project: Project }) => {
+  console.log('project', project);
+  const upvotes = project?.upvotes?.toNumber() || 0;
   return (
     <>
-      <Stack
-        backgroundColor="white"
-        rounded="lg"
-        gap="0"
-        transition="all 2s linear"
-        cursor="pointer"
-        _hover={{
-          bgGradient: 'linear(to-r, white, green.50)',
-        }}
-      >
-        <Flex gap="4">
-          <Stack gap="0" spacing="1">
-            <Box w="full" onClick={onOpen}>
+      <Stack>
+        <Flex gap="0">
+          <Upvote project={project} />
+          <Stack gap="0" spacing="0">
+            <Box w="full">
               <HStack>
-                <Link
-                  href={'https://' + project.website}
-                  target="_blank"
-                  fontSize="xs"
-                >
-                  <Text fontSize={['sm', 'md', 'lg']} fontWeight="bold" pb="1">
-                    {project.website}
+                <Link href={project.website} target="_blank" fontSize="xs">
+                  <Text
+                    fontSize={['sm', 'sm', 'md']}
+                    fontWeight="semibold"
+                    lineHeight="130%"
+                    pb="0"
+                  >
+                    {project?.description}
                   </Text>
                 </Link>
               </HStack>
-              <Text fontSize={['xs', 'sm', 'md']} pb="0" mt="0">
-                {project?.description}
-              </Text>
+              <HStack gap="0" spacing="1">
+                <Text fontSize={['xs', 'xs', 'xs']} pb="0" mt="0">
+                  {upvotes} {upvotes === 1 ? 'upvote' : 'upvotes'}
+                </Text>
+                <Text fontSize="xs">|</Text>
+                <Text fontSize="xs" pb="0" mt="0">
+                  submitted{' '}
+                  {moment(project?.timestamp.toNumber() * 1000).fromNow()} by{' '}
+                  <Link
+                    href={`https://base-goerli.blockscout.com/address/${project?.creatorAddress}`}
+                    target="_blank"
+                    fontSize={['xs', 'xs', 'xs']}
+                  >
+                    {formatAddress(project?.creatorAddress)}
+                  </Link>
+                </Text>
+              </HStack>
             </Box>
           </Stack>
-          <Spacer />
-          <Upvote
-            signer={signer}
-            web3AuthProvider={web3AuthProvider}
-            project={project}
-          />
         </Flex>
       </Stack>
     </>

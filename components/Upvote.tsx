@@ -15,12 +15,10 @@ import {
 import { useContext } from 'react';
 import { UserContext } from '../lib/UserContext';
 import { FaCaretUp } from 'react-icons/fa';
-import useVotingContract, { Project } from '@/hooks/useVotingContract';
-import useAddUpvote from '../hooks/useAddUpvote';
+import { Project } from '@/hooks/contracts/useVotingContract';
 import { toast } from 'react-hot-toast';
 import ClubContract from '../hooks/contracts/Club.json';
-import useUpvotes from '../hooks/useUpvotes';
-import VotingContract from '../hooks/Voting.json';
+import VotingContract from '../hooks/contracts/Voting.json';
 import * as wagmi from 'wagmi';
 import { GelatoRelay } from '@gelatonetwork/relay-sdk';
 import { ethers } from 'ethers';
@@ -28,37 +26,20 @@ import { makeBig } from '@/lib/number-utils';
 
 const relay = new GelatoRelay();
 
-const Upvote = ({
-  signer,
-  web3AuthProvider,
-  project,
-}: {
-  signer: any;
-  web3AuthProvider: any;
-  project: Project;
-}) => {
+const Upvote = ({ project }: { project: Project }) => {
+  const [user, _]: any = useContext(UserContext);
   const [upvoteCount, setUpvoteCount] = useState(0);
-  const upvotesQuery = useUpvotes({ projectId: project.projectId });
   const votingContract = wagmi.useContract({
     address: '0xF8ac8A09d6Ce1f2b68e9EBC0d5d42f91E8a758bC',
     abi: VotingContract.abi,
-    signerOrProvider: signer,
+    signerOrProvider: user.signer,
   });
   const clubContract = wagmi.useContract({
     address: '0xE9A46d9865C4dDD8b15be9D6b4eE7732E27A1878',
     abi: ClubContract.abi,
-    signerOrProvider: signer,
+    signerOrProvider: user.signer,
   });
   const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    const fetchUpvoteCount = async () => {
-      if (upvotesQuery.isFetched && !!upvotesQuery.data) {
-        setUpvoteCount(upvotesQuery.data?.toNumber());
-      }
-    };
-    fetchUpvoteCount();
-  }, [upvotesQuery.data, upvotesQuery.isFetched]);
 
   const handleUpvote = async () => {
     setIsLoading(true);
@@ -74,22 +55,16 @@ const Upvote = ({
         chainId: 84531,
         target: '0xE9A46d9865C4dDD8b15be9D6b4eE7732E27A1878',
         data: data2,
-        user: await signer.getAddress(),
+        user: await user.signer.getAddress(),
       };
 
       console.log('request', request);
 
       const apiKey = process.env.NEXT_PUBLIC_GELATO_API_KEY as string;
 
-      console.log(apiKey);
-
-      console.log('web3AuthProvider', web3AuthProvider);
-
-      const provider = new ethers.providers.Web3Provider(web3AuthProvider);
-
       const response = await relay.sponsoredCallERC2771(
         request,
-        provider,
+        user.provider,
         apiKey
       );
       console.log('response', response);
@@ -100,6 +75,7 @@ const Upvote = ({
         try {
           const taskStatus = await relay.getTaskStatus(taskId);
           console.log('taskStatus', taskStatus);
+          setIsLoading(true);
           if (taskStatus?.taskState === 'ExecSuccess') {
             clearInterval(interval);
             const { data } =
@@ -112,18 +88,12 @@ const Upvote = ({
               chainId: 84531,
               target: '0xF8ac8A09d6Ce1f2b68e9EBC0d5d42f91E8a758bC',
               data: data,
-              user: await signer.getAddress(),
+              user: await user.signer.getAddress(),
             };
-
-            console.log('request2', request2);
-
-            console.log(apiKey);
-
-            console.log('web3AuthProvider', web3AuthProvider);
 
             const response2 = await relay.sponsoredCallERC2771(
               request2,
-              provider,
+              user.provider,
               apiKey
             );
             console.log('response', response2);
@@ -142,7 +112,9 @@ const Upvote = ({
                   toast.success('Link upvoted!');
                 } else if (taskStatus?.taskState === 'CheckPending') {
                   if (
-                    taskStatus?.lastCheckMessage?.includes('Execution error')
+                    taskStatus?.lastCheckMessage?.includes(
+                      'sponsoredCallERC2771:'
+                    )
                   ) {
                     clearInterval(interval2);
                     throw new Error(
@@ -151,13 +123,17 @@ const Upvote = ({
                       )[1]
                     );
                   }
+                } else if (taskStatus?.taskState === 'Cancelled') {
+                  throw new Error('Error upvoting link');
                 }
               } catch (error) {
                 console.log(error);
-                if (!error?.toString().includes('GelatoRelaySDK/getTaskStatus'))
+                if (
+                  !error?.toString().includes('GelatoRelaySDK/getTaskStatus')
+                ) {
+                  setIsLoading(false);
                   toast.error(`${error}`);
-
-                setIsLoading(false);
+                }
               }
             }, 1000);
           }
@@ -168,6 +144,7 @@ const Upvote = ({
     } catch (error) {
       // re-enable login button - user may have requested to edit their email
       console.log(error);
+      setIsLoading(true);
     }
   };
 
@@ -177,19 +154,12 @@ const Upvote = ({
         onClick={handleUpvote}
         isLoading={isLoading}
         size="sm"
-        p="4"
-        h="100%"
-        bg="white"
-        border="1px solid #d9e1ec"
-        _hover={{
-          border: '1px solid #48BB78',
-          bgColor: '#F0FFF4',
-          boxShadow: 'md',
-        }}
+        colorScheme="orange"
+        variant="ghost"
+        h="full"
       >
         <Stack gap="0" spacing="0">
-          <FaCaretUp fontSize="30px" />
-          <Text mt="0">{upvoteCount}</Text>
+          <FaCaretUp fontSize="25px" />
         </Stack>
       </Button>
     </>

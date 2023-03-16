@@ -1,29 +1,33 @@
 import React, { useContext, useState } from 'react';
-import { Button, FormControl, Input, Box } from '@chakra-ui/react';
+import {
+  Button,
+  FormControl,
+  Input,
+  Box,
+  HStack,
+  Text,
+  Stack,
+} from '@chakra-ui/react';
 import { UserContext } from '@/lib/UserContext';
-import VotingContract from '../hooks/Voting.json';
+import VotingContract from '../hooks/contracts/Voting.json';
 import * as wagmi from 'wagmi';
 import { GelatoRelay } from '@gelatonetwork/relay-sdk';
-import { ethers } from 'ethers';
+import { useRouter } from 'next/router';
+import toast from 'react-hot-toast';
 
 const relay = new GelatoRelay();
 
-const CreateProject = ({
-  signer,
-  web3AuthProvider,
-}: {
-  signer: any;
-  web3AuthProvider: any;
-}) => {
+const CreateProject = () => {
+  const [user, _]: any = useContext(UserContext);
   const [website, setWebsite] = useState('');
   const [description, setDescription] = useState('');
   const signerContract = wagmi.useContract({
     address: '0xF8ac8A09d6Ce1f2b68e9EBC0d5d42f91E8a758bC',
     abi: VotingContract.abi,
-    signerOrProvider: signer,
+    signerOrProvider: user?.signer,
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [_, setUser]: any = useContext(UserContext);
+  const router = useRouter();
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
@@ -40,67 +44,97 @@ const CreateProject = ({
         chainId: 84531,
         target: '0xF8ac8A09d6Ce1f2b68e9EBC0d5d42f91E8a758bC',
         data: data,
-        user: await signer.getAddress(),
+        user: await user?.signer.getAddress(),
       };
-
-      console.log('request2', request);
 
       const apiKey = process.env.NEXT_PUBLIC_GELATO_API_KEY as string;
 
-      console.log(apiKey);
-
-      console.log('web3AuthProvider', web3AuthProvider);
-
-      const provider = new ethers.providers.Web3Provider(web3AuthProvider);
-
       const response = await relay.sponsoredCallERC2771(
         request,
-        provider,
+        user?.provider,
         apiKey
       );
-      console.log('response', response);
+
+      const taskId = response.taskId;
+      // create interval where we check the status of the task every second until it is completed
+      const interval = setInterval(async () => {
+        try {
+          setIsLoading(true);
+          const taskStatus = await relay.getTaskStatus(taskId);
+          console.log('taskStatus', taskStatus);
+          if (taskStatus?.taskState === 'ExecSuccess') {
+            clearInterval(interval);
+            setIsLoading(false);
+            toast.success('Link submitted!');
+            router.push('/');
+          } else if (taskStatus?.taskState === 'CheckPending') {
+            if (
+              taskStatus?.lastCheckMessage?.includes('sponsoredCallERC2771:')
+            ) {
+              clearInterval(interval);
+              throw new Error(
+                taskStatus?.lastCheckMessage?.split('sponsoredCallERC2771:')[1]
+              );
+            }
+          } else if (taskStatus?.taskState === 'Cancelled') {
+            throw new Error('Error submitting link');
+          }
+        } catch (error) {
+          console.log(error);
+          if (!error?.toString().includes('GelatoRelaySDK/getTaskStatus')) {
+            setIsLoading(false);
+            toast.error(`${error}`);
+          }
+        }
+      }, 1000);
     } catch (error) {
       setIsLoading(false); // re-enable login button - user may have requested to edit their email
       console.log(error);
     }
   };
   return (
-    <Box maxW="lg" mx="auto">
+    <Box maxW="lg" p="8">
       <form onSubmit={handleSubmit}>
-        <FormControl id="role">
-          <Input
-            type="text"
-            placeholder="Website"
-            value={website}
-            border="1px solid #d9e1ec"
-            size="lg"
-            onChange={(e) => setWebsite(e.target.value)}
-          />
-        </FormControl>
-        <FormControl id="role">
-          <Input
-            type="text"
-            placeholder="Description"
-            value={description}
-            border="1px solid #d9e1ec"
-            size="lg"
-            onChange={(e) => setDescription(e.target.value)}
-          />
-        </FormControl>
-
-        <FormControl id="role">
-          <Button
-            isLoading={isLoading}
-            mt={2}
-            colorScheme="green"
-            w="full"
-            size="lg"
-            type="submit"
-          >
-            Create
-          </Button>
-        </FormControl>
+        <Stack gap="1">
+          <HStack id="role">
+            <Text w="8">link</Text>
+            <Input
+              type="text"
+              placeholder="https://www.seedclub.xyz/"
+              value={website}
+              size="sm"
+              bg="white"
+              onChange={(e) => setWebsite(e.target.value)}
+            />
+          </HStack>
+          <HStack id="role">
+            <Text w="8">title</Text>
+            <Input
+              type="text"
+              value={description}
+              placeholder="Make something people want to be a part of"
+              bg="white"
+              size="sm"
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </HStack>
+          <HStack pl="9">
+            <Button
+              isLoading={isLoading}
+              colorScheme="orange"
+              type="submit"
+              size="sm"
+            >
+              Submit
+            </Button>
+          </HStack>
+        </Stack>
       </form>
+      <Text p="8">
+        Submit a link you find valuable. Each time someone upvotes your link{' '}
+        {" you'll "}
+        get 1 CLUB token.{' '}
+      </Text>
     </Box>
   );
 };

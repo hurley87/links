@@ -1,37 +1,51 @@
 import { Stack } from '@chakra-ui/react';
-import useProjects from '@/hooks/useProjects';
 import ProjectCard from './ProjectCard';
 import ProjectsLoading from './ProjectLoading';
-import { useContext } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { UserContext } from '@/lib/UserContext';
+import VotingContract from '../hooks/contracts/Voting.json';
+import * as wagmi from 'wagmi';
+import { Project } from '@/hooks/contracts/useVotingContract';
 
-const Projects = ({
-  signer,
-  web3AuthProvider,
-}: {
-  signer: any;
-  web3AuthProvider: any;
-}) => {
-  const { allProjectsQuery } = useProjects();
+const Projects = () => {
   const [user, _]: any = useContext(UserContext);
+  const [isLoading, setIsLoading] = useState(false);
+  const [projects, setProjects] = useState<any>([]);
+  const contract = wagmi.useContract({
+    // Add the address that was output from your deploy script
+    address: '0xF8ac8A09d6Ce1f2b68e9EBC0d5d42f91E8a758bC',
+    abi: VotingContract.abi,
+    signerOrProvider: user?.provider,
+  });
 
-  console.log(allProjectsQuery.data);
+  // use callback to fetch projects
+  const fetchData = useCallback(async () => {
+    if (contract) {
+      const qArray = await contract.getProjects();
+      setProjects(qArray.map((q: Project) => ({ ...q })));
+    }
+  }, [user]);
 
+  useEffect(() => {
+    if (!user?.loading) fetchData().catch((err) => console.error(err));
+  }, [fetchData]);
+
+  // console.log(user);
   return (
     <>
-      <Stack gap={6} maxW="2xl" mx="auto" pt="10">
-        {allProjectsQuery.isLoading && <ProjectsLoading />}
-        {allProjectsQuery.data
-          ?.sort((a, b) => {
-            return b.upvotes.toNumber() - a.upvotes.toNumber();
-          })
-          .map((project, i) => (
-            <ProjectCard
-              signer={signer}
-              web3AuthProvider={web3AuthProvider}
-              key={i}
-              project={project}
-            />
+      <Stack gap={2} p="4">
+        {isLoading && <ProjectsLoading />}
+        {projects
+          ?.sort(
+            (
+              a: { upvotes: { toNumber: () => number } },
+              b: { upvotes: { toNumber: () => number } }
+            ) => {
+              return b.upvotes.toNumber() - a.upvotes.toNumber();
+            }
+          )
+          .map((project: any, i: number) => (
+            <ProjectCard key={i} project={project} />
           ))}
       </Stack>
     </>
