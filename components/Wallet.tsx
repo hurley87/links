@@ -1,7 +1,5 @@
-import React, { useContext } from 'react';
-import NextLink from 'next/link';
-import { Flex, Text, HStack } from '@chakra-ui/react';
-import { UserContext } from '@/lib/UserContext';
+import React from 'react';
+import { Text } from '@chakra-ui/react';
 
 // function to format user wallet address
 const formatAddress = (address: string) => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Button,
   useDisclosure,
@@ -23,13 +23,20 @@ import * as wagmi from 'wagmi';
 import { GelatoRelay } from '@gelatonetwork/relay-sdk';
 import { makeBig } from '@/lib/number-utils';
 import { gelato } from '@/lib/gelato';
+import useClubContract from '@/hooks/contracts/useClubContract';
+import Mint from './Mint';
 
 const relay = new GelatoRelay();
 
-const Upvote = ({ project }: { project: Project }) => {
+type UpvoteProps = {
+  project: Project;
+  setUpvotes: (upvotes: number) => void;
+};
+
+const Upvote = ({ project, setUpvotes }: UpvoteProps) => {
   const [user, _]: any = useContext(UserContext);
   const votingContract = wagmi.useContract({
-    address: '0xF8ac8A09d6Ce1f2b68e9EBC0d5d42f91E8a758bC',
+    address: '0xd4435f714C5aC18d993F0aBBc9829ebE80E9e642',
     abi: VotingContract.abi,
     signerOrProvider: user?.signer,
   });
@@ -38,14 +45,16 @@ const Upvote = ({ project }: { project: Project }) => {
     abi: ClubContract.abi,
     signerOrProvider: user?.signer,
   });
+  const contract = useClubContract(user?.signer, user?.provider);
   const [isLoading, setIsLoading] = useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleUpvote = async () => {
     setIsLoading(true);
     try {
       setIsLoading(true); // disable login button to prevent multiple emails from being triggered
       const { data: data2 } = await clubContract!.populateTransaction.approve(
-        '0xF8ac8A09d6Ce1f2b68e9EBC0d5d42f91E8a758bC',
+        '0xd4435f714C5aC18d993F0aBBc9829ebE80E9e642',
         makeBig(1)
       );
       console.log('data2', data2);
@@ -85,7 +94,7 @@ const Upvote = ({ project }: { project: Project }) => {
 
             const request2: any = {
               chainId: 84531,
-              target: '0xF8ac8A09d6Ce1f2b68e9EBC0d5d42f91E8a758bC',
+              target: '0xd4435f714C5aC18d993F0aBBc9829ebE80E9e642',
               data: data,
               user: await user.signer.getAddress(),
             };
@@ -109,6 +118,8 @@ const Upvote = ({ project }: { project: Project }) => {
                   clearInterval(interval2);
                   setIsLoading(false);
                   toast.success('Link upvoted!');
+                  setUpvotes(project.upvotes.toNumber() + 1);
+                  return;
                 } else if (taskStatus?.taskState === 'CheckPending') {
                   if (
                     taskStatus?.lastCheckMessage?.includes(
@@ -155,6 +166,16 @@ const Upvote = ({ project }: { project: Project }) => {
       if (!user?.signer) {
         await gelato.login();
       } else {
+        const balance = await contract?.getBalance(user?.address);
+        const mintCount = await contract?.getMintCount(user?.address);
+        if (mintCount === 0) {
+          onOpen();
+          return;
+        }
+        if (balance && parseInt(balance) < 1) {
+          toast.error('You need 1 CLUB to upvote a link');
+          return;
+        }
         handleUpvote();
       }
     } catch (error) {
@@ -177,6 +198,21 @@ const Upvote = ({ project }: { project: Project }) => {
           <FaCaretUp fontSize="23px" />
         </Stack>
       </Button>
+      <Modal size={'sm'} isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalCloseButton />
+          <ModalBody>
+            <Box p="4">
+              <Text py="4" mt="0" textAlign="center" fontSize="md">
+                Each time you upvote a link {"you'll"} send a token to whoever
+                submitted the project.
+              </Text>
+              <Mint onClose={onClose} />
+            </Box>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </>
   );
 };

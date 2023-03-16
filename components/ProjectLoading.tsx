@@ -7,7 +7,7 @@ const ProjectsLoading = () => {
       {[1, 2, 3, 4, 5, 6].map((i) => (
         <Stack key={i} gap="0">
           <Skeleton w="140px" h="24px" />
-          <Skeleton w="440px" h="20px" />
+          <Skeleton w="90%" maxW="440px" h="20px" />
         </Stack>
       ))}
     </Stack>

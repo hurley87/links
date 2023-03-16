@@ -40,6 +40,7 @@ function MyApp({ Component, pageProps }) {
         user['signer'] = signer;
         user['provider'] = web3Provider;
         user['address'] = address;
+        user['balance'] = 0;
 
         setUser(user);
       } catch (error) {

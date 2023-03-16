@@ -5,11 +5,16 @@ import * as wagmi from 'wagmi';
 import { GelatoRelay } from '@gelatonetwork/relay-sdk';
 import { makeBig } from '@/lib/number-utils';
 import { UserContext } from '@/lib/UserContext';
+import toast from 'react-hot-toast';
 
 const relay = new GelatoRelay();
 
-const Mint = () => {
-  const [user, _]: any = useContext(UserContext);
+type MintProps = {
+  onClose: () => void;
+};
+
+const Mint = ({ onClose }: MintProps) => {
+  const [user, setUser]: any = useContext(UserContext);
   const signerContract = wagmi.useContract({
     address: '0xE9A46d9865C4dDD8b15be9D6b4eE7732E27A1878',
     abi: ClubContract.abi,
@@ -43,21 +48,52 @@ const Mint = () => {
         apiKey
       );
       console.log('response', response);
-      setIsLoading(false);
+      const taskId = response.taskId;
+
+      const interval = setInterval(async () => {
+        try {
+          setIsLoading(true);
+          const taskStatus = await relay.getTaskStatus(taskId);
+          console.log('taskStatus', taskStatus);
+          if (taskStatus?.taskState === 'ExecSuccess') {
+            clearInterval(interval);
+            setIsLoading(false);
+            toast.success('Tokens claimed!');
+            setUser({ ...user, balance: user.balance + 5 });
+            onClose();
+          } else if (taskStatus?.taskState === 'CheckPending') {
+            if (
+              taskStatus?.lastCheckMessage?.includes('sponsoredCallERC2771:')
+            ) {
+              clearInterval(interval);
+              throw new Error(
+                taskStatus?.lastCheckMessage?.split('sponsoredCallERC2771:')[1]
+              );
+            }
+          } else if (taskStatus?.taskState === 'Cancelled') {
+            throw new Error('Error minting tokens');
+          }
+        } catch (error) {
+          console.log(error);
+          if (!error?.toString().includes('GelatoRelaySDK/getTaskStatus')) {
+            setIsLoading(false);
+            toast.error(`${error}`);
+          }
+        }
+      }, 1000);
     } catch (error) {
-      setIsLoading(false); // re-enable login button - user may have requested to edit their email
       console.log(error);
     }
   }
   return (
     <Button
       onClick={mint}
-      colorScheme="green"
-      borderWidth="3px"
-      borderColor="green.500"
+      colorScheme="orange"
+      w="full"
+      mx="auto"
       isLoading={isLoading}
     >
-      Mint
+      Claim 5 CLUB Tokens
     </Button>
   );
 };

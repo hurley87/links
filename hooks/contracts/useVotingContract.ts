@@ -26,7 +26,7 @@ const useVotingContract = (signer: any, provider: any) => {
   // We need to pass in the address of our deployed contract as well as its abi.
   const contract = wagmi.useContract({
     // Add the address that was output from your deploy script
-    address: '0xF8ac8A09d6Ce1f2b68e9EBC0d5d42f91E8a758bC',
+    address: '0xd4435f714C5aC18d993F0aBBc9829ebE80E9e642',
     abi: VotingContract.abi,
     signerOrProvider: provider,
   });
@@ -52,7 +52,7 @@ const useVotingContract = (signer: any, provider: any) => {
 
       const request: any = {
         chainId: 84531,
-        target: '0xF8ac8A09d6Ce1f2b68e9EBC0d5d42f91E8a758bC',
+        target: '0xd4435f714C5aC18d993F0aBBc9829ebE80E9e642',
         data: data,
         user: await signer.getAddress(),
       };
@@ -80,7 +80,7 @@ const useVotingContract = (signer: any, provider: any) => {
 
       const request: any = {
         chainId: 84531,
-        target: '0xF8ac8A09d6Ce1f2b68e9EBC0d5d42f91E8a758bC',
+        target: '0xd4435f714C5aC18d993F0aBBc9829ebE80E9e642',
         data: data,
         user: await signer.getAddress(),
       };

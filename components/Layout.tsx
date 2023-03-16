@@ -46,7 +46,7 @@ const Layout = ({ children }: Props) => (
       />
     </Head>
 
-    <Box p={2} maxW="80em" w="full" mx="auto">
+    <Box p={2} maxW="74em" w="full" mx="auto">
       <Navbar />
       <Box bg="orange.50">{children}</Box>
     </Box>

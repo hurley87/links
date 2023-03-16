@@ -13,17 +13,19 @@ const formatAddress = (address: string) => {
 const Navbar = () => {
   const [user, setUser]: any = useContext(UserContext);
   const contract = useClubContract(user?.signer, user?.provider);
-  const [balance, setBalance] = useState(0);
+  const [isFetched, setIsFetched] = useState(false);
 
   useEffect(() => {
     const fetchBalance = async () => {
       if (contract && user?.address) {
-        const balance = await contract.getBalance(user?.address);
-        setBalance(parseInt(balance));
+        const balanceReturned = await contract.getBalance(user?.address);
+        const balance = parseInt(balanceReturned);
+        setUser({ ...user, balance });
+        setIsFetched(true);
       }
     };
-    fetchBalance();
-  }, [contract]);
+    if (!isFetched) fetchBalance();
+  }, [contract, setUser, user, isFetched]);
 
   async function connect() {
     try {
@@ -41,6 +43,7 @@ const Navbar = () => {
       return;
     }
     await gelato.logout();
+    window.location.reload();
     setUser(null);
   };
 
@@ -82,12 +85,12 @@ const Navbar = () => {
           gap={2}
         >
           <Link
-            href={`https://base-goerli.blockscout.com/address/${user.address}`}
+            href={`https://base-goerli.blockscout.com/address/${user.address}?tab=token_transfers`}
             target="_blank"
             fontSize="sm"
             cursor="pointer"
           >
-            {formatAddress(user.address)} ({balance})
+            {formatAddress(user.address)} ({user.balance})
           </Link>
           <Text>|</Text>
           <Text fontSize="sm" cursor="pointer" onClick={logout}>

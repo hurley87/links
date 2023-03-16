@@ -1,6 +1,7 @@
 import { Project } from '@/hooks/contracts/useVotingContract';
 import { Box, Flex, HStack, Link, Stack, Text } from '@chakra-ui/react';
 import moment from 'moment';
+import { useState } from 'react';
 import Upvote from './Upvote';
 
 // function to format user wallet address
@@ -9,13 +10,12 @@ const formatAddress = (address: string) => {
 };
 
 const ProjectCard = ({ project }: { project: Project }) => {
-  console.log('project', project);
-  const upvotes = project?.upvotes?.toNumber() || 0;
+  const [upvotes, setUpvotes] = useState(project?.upvotes?.toNumber() || 0);
   return (
     <>
       <Stack>
         <Flex gap="0">
-          <Upvote project={project} />
+          <Upvote setUpvotes={setUpvotes} project={project} />
           <Stack gap="0" spacing="0">
             <Box w="full">
               <HStack>

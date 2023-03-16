@@ -1,13 +1,5 @@
 import React, { useContext, useState } from 'react';
-import {
-  Button,
-  FormControl,
-  Input,
-  Box,
-  HStack,
-  Text,
-  Stack,
-} from '@chakra-ui/react';
+import { Button, Input, Box, HStack, Text, Stack } from '@chakra-ui/react';
 import { UserContext } from '@/lib/UserContext';
 import VotingContract from '../hooks/contracts/Voting.json';
 import * as wagmi from 'wagmi';
@@ -22,7 +14,7 @@ const CreateProject = () => {
   const [website, setWebsite] = useState('');
   const [description, setDescription] = useState('');
   const signerContract = wagmi.useContract({
-    address: '0xF8ac8A09d6Ce1f2b68e9EBC0d5d42f91E8a758bC',
+    address: '0xd4435f714C5aC18d993F0aBBc9829ebE80E9e642',
     abi: VotingContract.abi,
     signerOrProvider: user?.signer,
   });
@@ -34,6 +26,24 @@ const CreateProject = () => {
     try {
       setIsLoading(true); // disable login button to prevent multiple emails from being triggered
 
+      if (!user?.signer) {
+        toast.error('Please login to submit a link');
+        setIsLoading(false);
+        return;
+      }
+
+      if (!website || !description) {
+        toast.error('Fill out all fields');
+        setIsLoading(false);
+        return;
+      }
+
+      if (!website.includes('https://')) {
+        toast.error('Include https:// in your link');
+        setIsLoading(false);
+        return;
+      }
+
       const { data } = await signerContract!.populateTransaction.postProject(
         website,
         description
@@ -42,7 +52,7 @@ const CreateProject = () => {
 
       const request: any = {
         chainId: 84531,
-        target: '0xF8ac8A09d6Ce1f2b68e9EBC0d5d42f91E8a758bC',
+        target: '0xd4435f714C5aC18d993F0aBBc9829ebE80E9e642',
         data: data,
         user: await user?.signer.getAddress(),
       };
@@ -121,6 +131,7 @@ const CreateProject = () => {
           <HStack pl="9">
             <Button
               isLoading={isLoading}
+              isDisabled={description.length === 0 || website.length === 0}
               colorScheme="orange"
               type="submit"
               size="sm"
