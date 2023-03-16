@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import NextLink from 'next/link';
-import { Flex, Text, HStack, Link } from '@chakra-ui/react';
+import { Flex, Text, HStack, Link, Box, Badge } from '@chakra-ui/react';
 import { UserContext } from '@/lib/UserContext';
 import useClubContract from '@/hooks/contracts/useClubContract';
 import { gelato } from '@/lib/gelato';
@@ -90,7 +90,12 @@ const Navbar = () => {
             fontSize="sm"
             cursor="pointer"
           >
-            {formatAddress(user.address)} ({user.balance})
+            <HStack spacing="1">
+              <Badge bg="orange.300" color="orange.800">
+                {user.balance}
+              </Badge>
+              <Text>{formatAddress(user.address)}</Text>
+            </HStack>
           </Link>
           <Text>|</Text>
           <Text fontSize="sm" cursor="pointer" onClick={logout}>
