@@ -7,7 +7,7 @@ import { gelato } from '@/lib/gelato';
 
 // function to format user wallet address
 const formatAddress = (address: string) => {
-  return address ? `${address.slice(0, 6)}...${address.slice(-4)}` : '';
+  return address ? `${address.slice(0, 4)}...${address.slice(-2)}` : '';
 };
 
 const Navbar = () => {
@@ -52,7 +52,7 @@ const Navbar = () => {
       bg="orange.800"
       color="orange.200"
     >
-      <HStack gap={1}>
+      <HStack gap={0}>
         <NextLink href="/" passHref>
           <Text
             transition="all 200ms linear"
@@ -87,7 +87,7 @@ const Navbar = () => {
             fontSize="sm"
             cursor="pointer"
           >
-            {formatAddress(user.address)} ({balance} CLUB)
+            {formatAddress(user.address)} ({balance})
           </Link>
           <Text>|</Text>
           <Text fontSize="sm" cursor="pointer" onClick={logout}>
