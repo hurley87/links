@@ -9,7 +9,7 @@ import { Toaster } from 'react-hot-toast';
 import { ethers } from 'ethers';
 
 const provider = new providers.JsonRpcProvider(
-  'https://delicate-evocative-forest.base-goerli.quiknode.pro/5ea844af25c75df309eaa0b76010b72febe250e9/',
+  'https://little-shy-feather.base-goerli.quiknode.pro/9ce46bdf099312e0e1cc22733b022d7f1455a600/',
   { name: 'base-goerli', chainId: 84531, ensAddress: undefined }
 );
 
