@@ -54,15 +54,6 @@ const ProjectCard = ({ project }: { project: Project }) => {
                   {project?.description}
                 </Text>
               </Link>
-              <Link
-                href={`https://base-goerli.blockscout.com/address/${project?.creatorAddress}?tab=token_transfers`}
-                target="_blank"
-                fontSize={['xs', 'xs', 'xs']}
-              >
-                <Badge colorScheme="orange">
-                  {formatAddress(project?.creatorAddress)} | {balance}
-                </Badge>
-              </Link>
             </HStack>
             <HStack gap="0" spacing="1">
               <Text fontSize={['xs', 'xs', 'xs']} pb="0" mt="0">
@@ -73,6 +64,15 @@ const ProjectCard = ({ project }: { project: Project }) => {
                 <Text>
                   {moment(project?.timestamp.toNumber() * 1000).fromNow()}
                 </Text>
+                <Link
+                  href={`https://base-goerli.blockscout.com/address/${project?.creatorAddress}?tab=token_transfers`}
+                  target="_blank"
+                  fontSize={['xs', 'xs', 'xs']}
+                >
+                  <Badge colorScheme="orange">
+                    {formatAddress(project?.creatorAddress)} | {balance}
+                  </Badge>
+                </Link>
               </HStack>
             </HStack>
           </Stack>
