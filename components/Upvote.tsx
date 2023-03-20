@@ -209,7 +209,7 @@ const Upvote = ({ project, setUpvotes, setBalance, balance }: UpvoteProps) => {
             <Box p="4">
               <Text py="4" mt="0" textAlign="center" fontSize="md">
                 Each time you upvote a link {"you'll"} send a token to whoever
-                submitted the project.
+                submitted the link.
               </Text>
               <Mint onClose={onClose} />
             </Box>
