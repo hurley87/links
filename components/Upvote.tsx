@@ -42,12 +42,12 @@ const Upvote = ({ project, setUpvotes, setBalance, balance }: UpvoteProps) => {
   useEffect(() => {
     const checkUpvote = async () => {
       if (user?.signer) {
-        const hasUpvoted = await votingContract?.hasUpvoted(project.projectId);
+        const hasUpvoted = await votingContract?.hasUpvoted(project?.projectId);
         setHasUpvoted(hasUpvoted);
       }
     };
     checkUpvote();
-  }, [user?.signer, project.id, votingContract]);
+  }, [user?.signer, project, votingContract]);
 
   const handleUpvote = async () => {
     setIsLoading(true);
