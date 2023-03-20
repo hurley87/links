@@ -16,9 +16,9 @@ type MintProps = {
 const Mint = ({ onClose }: MintProps) => {
   const [user, setUser]: any = useContext(UserContext);
   const signerContract = wagmi.useContract({
-    address: '0xE9A46d9865C4dDD8b15be9D6b4eE7732E27A1878',
+    address: '0xA5909B30b1267B36a93d2d3f6eB1809Db36e9a7E',
     abi: ClubContract.abi,
-    signerOrProvider: user.signer,
+    signerOrProvider: user?.signer,
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -33,7 +33,7 @@ const Mint = ({ onClose }: MintProps) => {
 
       const request: any = {
         chainId: 84531,
-        target: '0xE9A46d9865C4dDD8b15be9D6b4eE7732E27A1878',
+        target: '0xA5909B30b1267B36a93d2d3f6eB1809Db36e9a7E',
         data: data,
         user: await user.signer.getAddress(),
       };

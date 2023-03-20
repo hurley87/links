@@ -1,8 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 import NextLink from 'next/link';
-import { Flex, Text, HStack, Link, Box, Badge } from '@chakra-ui/react';
+import { Flex, Text, HStack, Link, Badge } from '@chakra-ui/react';
 import { UserContext } from '@/lib/UserContext';
-import useClubContract from '@/hooks/contracts/useClubContract';
 import { gelato } from '@/lib/gelato';
 
 // function to format user wallet address
@@ -12,20 +11,6 @@ const formatAddress = (address: string) => {
 
 const Navbar = () => {
   const [user, setUser]: any = useContext(UserContext);
-  const contract = useClubContract(user?.signer, user?.provider);
-  const [isFetched, setIsFetched] = useState(false);
-
-  useEffect(() => {
-    const fetchBalance = async () => {
-      if (contract && user?.address) {
-        const balanceReturned = await contract.getBalance(user?.address);
-        const balance = parseInt(balanceReturned);
-        setUser({ ...user, balance });
-        setIsFetched(true);
-      }
-    };
-    if (!isFetched) fetchBalance();
-  }, [contract, setUser, user, isFetched]);
 
   async function connect() {
     try {

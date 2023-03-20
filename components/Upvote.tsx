@@ -1,16 +1,5 @@
-import React, { useState } from 'react';
-import {
-  Button,
-  useDisclosure,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalBody,
-  ModalCloseButton,
-  Box,
-  Text,
-  Stack,
-} from '@chakra-ui/react';
+import React, { useEffect, useState } from 'react';
+import { Button, Stack } from '@chakra-ui/react';
 
 import { useContext } from 'react';
 import { UserContext } from '../lib/UserContext';
@@ -24,7 +13,6 @@ import { GelatoRelay } from '@gelatonetwork/relay-sdk';
 import { makeBig } from '@/lib/number-utils';
 import { gelato } from '@/lib/gelato';
 import useClubContract from '@/hooks/contracts/useClubContract';
-import Mint from './Mint';
 
 const relay = new GelatoRelay();
 
@@ -38,32 +26,42 @@ type UpvoteProps = {
 const Upvote = ({ project, setUpvotes, setBalance, balance }: UpvoteProps) => {
   const [user, _]: any = useContext(UserContext);
   const votingContract = wagmi.useContract({
-    address: '0xd4435f714C5aC18d993F0aBBc9829ebE80E9e642',
+    address: '0x93697e88337ee711C137752579A64C7d2D6dD122',
     abi: VotingContract.abi,
     signerOrProvider: user?.signer,
   });
   const clubContract = wagmi.useContract({
-    address: '0xE9A46d9865C4dDD8b15be9D6b4eE7732E27A1878',
+    address: '0xA5909B30b1267B36a93d2d3f6eB1809Db36e9a7E',
     abi: ClubContract.abi,
     signerOrProvider: user?.signer,
   });
   const contract = useClubContract(user?.signer, user?.provider);
   const [isLoading, setIsLoading] = useState(false);
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [hasUpvoted, setHasUpvoted] = useState(false);
+
+  useEffect(() => {
+    const checkUpvote = async () => {
+      if (user?.signer) {
+        const hasUpvoted = await votingContract?.hasUpvoted(project.projectId);
+        setHasUpvoted(hasUpvoted);
+      }
+    };
+    checkUpvote();
+  }, [user?.signer, project.id, votingContract]);
 
   const handleUpvote = async () => {
     setIsLoading(true);
     try {
       setIsLoading(true); // disable login button to prevent multiple emails from being triggered
       const { data: data2 } = await clubContract!.populateTransaction.approve(
-        '0xd4435f714C5aC18d993F0aBBc9829ebE80E9e642',
+        '0x93697e88337ee711C137752579A64C7d2D6dD122',
         makeBig(1)
       );
       console.log('data2', data2);
 
       const request: any = {
         chainId: 84531,
-        target: '0xE9A46d9865C4dDD8b15be9D6b4eE7732E27A1878',
+        target: '0xA5909B30b1267B36a93d2d3f6eB1809Db36e9a7E',
         data: data2,
         user: await user.signer.getAddress(),
       };
@@ -96,7 +94,7 @@ const Upvote = ({ project, setUpvotes, setBalance, balance }: UpvoteProps) => {
 
             const request2: any = {
               chainId: 84531,
-              target: '0xd4435f714C5aC18d993F0aBBc9829ebE80E9e642',
+              target: '0x93697e88337ee711C137752579A64C7d2D6dD122',
               data: data,
               user: await user.signer.getAddress(),
             };
@@ -107,48 +105,51 @@ const Upvote = ({ project, setUpvotes, setBalance, balance }: UpvoteProps) => {
               apiKey
             );
             console.log('response', response2);
-            const taskId2 = response2.taskId;
-            setIsLoading(true);
+            setIsLoading(false);
+            toast.success('Link upvoted!');
+            setUpvotes(project.upvotes.toNumber() + 1);
+            setBalance(balance + 1);
+            setHasUpvoted(true);
 
             // create interval where we check the status of the task every second until it is completed
-            const interval2 = setInterval(async () => {
-              try {
-                setIsLoading(true);
-                const taskStatus = await relay.getTaskStatus(taskId2);
-                console.log('taskStatus', taskStatus);
-                if (taskStatus?.taskState === 'ExecSuccess') {
-                  clearInterval(interval2);
-                  setIsLoading(false);
-                  toast.success('Link upvoted!');
-                  setUpvotes(project.upvotes.toNumber() + 1);
-                  setBalance(balance + 1);
-                  return;
-                } else if (taskStatus?.taskState === 'CheckPending') {
-                  if (
-                    taskStatus?.lastCheckMessage?.includes(
-                      'sponsoredCallERC2771:'
-                    )
-                  ) {
-                    clearInterval(interval2);
-                    throw new Error(
-                      taskStatus?.lastCheckMessage?.split(
-                        'sponsoredCallERC2771:'
-                      )[1]
-                    );
-                  }
-                } else if (taskStatus?.taskState === 'Cancelled') {
-                  throw new Error('Error upvoting link');
-                }
-              } catch (error) {
-                console.log(error);
-                if (
-                  !error?.toString().includes('GelatoRelaySDK/getTaskStatus')
-                ) {
-                  setIsLoading(false);
-                  toast.error(`${error}`);
-                }
-              }
-            }, 1000);
+            // const interval2 = setInterval(async () => {
+            //   try {
+            //     setIsLoading(true);
+            //     const taskStatus = await relay.getTaskStatus(taskId2);
+            //     console.log('taskStatus', taskStatus);
+            //     if (taskStatus?.taskState === 'ExecSuccess') {
+            //       // clearInterval(interval2);
+            //       // setIsLoading(false);
+            //       // toast.success('Link upvoted!');
+            //       setUpvotes(project.upvotes.toNumber() + 1);
+            //       setBalance(balance + 1);
+            //       return;
+            //     } else if (taskStatus?.taskState === 'CheckPending') {
+            //       if (
+            //         taskStatus?.lastCheckMessage?.includes(
+            //           'sponsoredCallERC2771:'
+            //         )
+            //       ) {
+            //         clearInterval(interval2);
+            //         throw new Error(
+            //           taskStatus?.lastCheckMessage?.split(
+            //             'sponsoredCallERC2771:'
+            //           )[1]
+            //         );
+            //       }
+            //     } else if (taskStatus?.taskState === 'Cancelled') {
+            //       throw new Error('Error upvoting link');
+            //     }
+            //   } catch (error) {
+            //     console.log(error);
+            //     if (
+            //       !error?.toString().includes('GelatoRelaySDK/getTaskStatus')
+            //     ) {
+            //       setIsLoading(false);
+            //       toast.error(`${error}`);
+            //     }
+            //   }
+            // }, 1000);
           }
         } catch (error) {
           console.log(error);
@@ -157,7 +158,7 @@ const Upvote = ({ project, setUpvotes, setBalance, balance }: UpvoteProps) => {
     } catch (error) {
       // re-enable login button - user may have requested to edit their email
       console.log(error);
-      setIsLoading(true);
+      setIsLoading(false);
     }
   };
 
@@ -170,13 +171,14 @@ const Upvote = ({ project, setUpvotes, setBalance, balance }: UpvoteProps) => {
         await gelato.login();
       } else {
         const balance = await contract?.getBalance(user?.address);
-        const mintCount = await contract?.getMintCount(user?.address);
-        if (mintCount === 0) {
-          onOpen();
-          return;
-        }
+
         if (balance && parseInt(balance) < 1) {
           toast.error('You need 1 CLUB to upvote a link');
+          return;
+        }
+
+        if (user?.address === project?.creatorAddress) {
+          toast.error('You cannot upvote your own link');
           return;
         }
         handleUpvote();
@@ -187,36 +189,20 @@ const Upvote = ({ project, setUpvotes, setBalance, balance }: UpvoteProps) => {
   };
 
   return (
-    <>
-      <Button
-        onClick={toggleUpvote}
-        isLoading={isLoading}
-        size="sm"
-        colorScheme="orange"
-        variant="ghost"
-        h="full"
-        p="0"
-      >
-        <Stack gap="0" spacing="0">
-          <FaCaretUp fontSize="21px" />
-        </Stack>
-      </Button>
-      <Modal size={'sm'} isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalCloseButton />
-          <ModalBody>
-            <Box p="4">
-              <Text py="4" mt="0" textAlign="center" fontSize="md">
-                Each time you upvote a link {"you'll"} send a token to whoever
-                submitted the link.
-              </Text>
-              <Mint onClose={onClose} />
-            </Box>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
-    </>
+    <Button
+      onClick={toggleUpvote}
+      isLoading={isLoading}
+      isDisabled={hasUpvoted}
+      size="sm"
+      colorScheme="orange"
+      variant="ghost"
+      h="full"
+      p="0"
+    >
+      <Stack gap="0" spacing="0">
+        <FaCaretUp fontSize="21px" />
+      </Stack>
+    </Button>
   );
 };
 

@@ -24,7 +24,7 @@ const useClubContract = (signer: any, provider: any) => {
     // We need to pass in the address of our deployed contract as well as its abi.
     const contract = wagmi.useContract({
       // Add the address that was output from your deploy script
-      address: '0xE9A46d9865C4dDD8b15be9D6b4eE7732E27A1878',
+      address: '0xA5909B30b1267B36a93d2d3f6eB1809Db36e9a7E',
       abi: ClubContract.abi,
       signerOrProvider: signer || provider,
     });

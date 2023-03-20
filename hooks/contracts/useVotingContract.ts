@@ -2,7 +2,6 @@ import * as wagmi from 'wagmi';
 import type { BigNumber } from 'ethers';
 import VotingContract from './Voting.json';
 import { GelatoRelay } from '@gelatonetwork/relay-sdk';
-import { gelato } from '@/lib/gelato';
 
 const relay = new GelatoRelay();
 
@@ -26,7 +25,7 @@ const useVotingContract = (signer: any, provider: any) => {
   // We need to pass in the address of our deployed contract as well as its abi.
   const contract = wagmi.useContract({
     // Add the address that was output from your deploy script
-    address: '0xd4435f714C5aC18d993F0aBBc9829ebE80E9e642',
+    address: '0x93697e88337ee711C137752579A64C7d2D6dD122',
     abi: VotingContract.abi,
     signerOrProvider: provider,
   });
@@ -52,7 +51,7 @@ const useVotingContract = (signer: any, provider: any) => {
 
       const request: any = {
         chainId: 84531,
-        target: '0xd4435f714C5aC18d993F0aBBc9829ebE80E9e642',
+        target: '0x93697e88337ee711C137752579A64C7d2D6dD122',
         data: data,
         user: await signer.getAddress(),
       };
@@ -80,7 +79,7 @@ const useVotingContract = (signer: any, provider: any) => {
 
       const request: any = {
         chainId: 84531,
-        target: '0xd4435f714C5aC18d993F0aBBc9829ebE80E9e642',
+        target: '0x93697e88337ee711C137752579A64C7d2D6dD122',
         data: data,
         user: await signer.getAddress(),
       };
