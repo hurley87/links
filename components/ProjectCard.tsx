@@ -71,9 +71,10 @@ const ProjectCard = ({ project }: { project: Project }) => {
                   target="_blank"
                   fontSize={['xs', 'xs', 'xs']}
                 >
-                  {formatAddress(project?.creatorAddress)}
+                  <Badge colorScheme="orange">
+                    {formatAddress(project?.creatorAddress)} | {balance}
+                  </Badge>
                 </Link>
-                <Badge colorScheme="orange">{balance}</Badge>
               </HStack>
             </HStack>
           </Stack>

@@ -90,10 +90,9 @@ const Navbar = () => {
             fontSize="sm"
             cursor="pointer"
           >
-            <HStack spacing="1">
-              <Text>{formatAddress(user.address)}</Text>
-              <Badge colorScheme="orange">{user.balance}</Badge>
-            </HStack>
+            <Badge colorScheme="orange">
+              {formatAddress(user.address)} | {user.balance}
+            </Badge>
           </Link>
           <Text>|</Text>
           <Text fontSize="sm" cursor="pointer" onClick={logout}>
