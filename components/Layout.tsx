@@ -54,27 +54,18 @@ const Layout = ({ children }: Props) => {
         />
         <meta charSet="utf-8" />
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
-        <meta
-          name="description"
-          content="Learn about the latest consumer crypto projects with a <3 minute weekly newsletter."
-        />
+        <meta name="description" content="Ideas worth paying for" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content="@seedclubhq" />
         <meta name="twitter:title" content="Consumer Crypto Club" />
-        <meta
-          name="twitter:description"
-          content="Learn about the latest consumer crypto projects with a <3 minute weekly newsletter."
-        />
+        <meta name="twitter:description" content="Ideas worth paying for" />
         <meta
           name="twitter:image"
           content={`https://consumercrypto.club/future.png`}
         />
         <meta property="og:url" content={`https://consumercrypto.club`} />
-        <meta property="og:title" content="Consumer Crpto Club Newsletter" />
-        <meta
-          property="og:description"
-          content="Learn about the latest consumer crypto projects with a <3 minute weekly newsletter."
-        />
+        <meta property="og:title" content="ClubLink" />
+        <meta property="og:description" content="Ideas worth paying for" />
         <meta
           property="og:image"
           content={`https://consumercrypto.club/future.png`}
