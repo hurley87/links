@@ -192,7 +192,7 @@ const Upvote = ({ project, setUpvotes, setBalance, balance }: UpvoteProps) => {
     <Button
       onClick={toggleUpvote}
       isLoading={isLoading}
-      isDisabled={hasUpvoted}
+      isDisabled={hasUpvoted || user?.address === project?.creatorAddress}
       size="sm"
       colorScheme="orange"
       variant="ghost"
