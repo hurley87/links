@@ -1,7 +1,7 @@
 import useClubContract from '@/hooks/contracts/useClubContract';
 import { Project } from '@/hooks/contracts/useVotingContract';
 import { UserContext } from '@/lib/UserContext';
-import { Badge, Box, Flex, HStack, Link, Stack, Text } from '@chakra-ui/react';
+import { Badge, Flex, HStack, Link, Stack, Text } from '@chakra-ui/react';
 import moment from 'moment';
 import { useContext, useEffect, useState } from 'react';
 import Upvote from './Upvote';

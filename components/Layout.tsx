@@ -12,7 +12,6 @@ import {
   Stack,
 } from '@chakra-ui/react';
 import Head from 'next/head';
-import { DEFAULT_THEME, getThemeVariables } from '@magiclabs/ui';
 import useClubContract from '@/hooks/contracts/useClubContract';
 import { UserContext } from '@/lib/UserContext';
 import Mint from './Mint';
@@ -46,12 +45,6 @@ const Layout = ({ children }: Props) => {
   return (
     <Box minH="100vh">
       <Head>
-        <style
-          type="text/css"
-          dangerouslySetInnerHTML={{
-            __html: getThemeVariables(DEFAULT_THEME).toCSS(),
-          }}
-        />
         <meta charSet="utf-8" />
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
         <meta name="description" content="Ideas worth paying for" />
