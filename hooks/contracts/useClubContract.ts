@@ -24,7 +24,7 @@ const useClubContract = (signer: any, provider: any) => {
     // We need to pass in the address of our deployed contract as well as its abi.
     const contract = wagmi.useContract({
       // Add the address that was output from your deploy script
-      address: '0xA5909B30b1267B36a93d2d3f6eB1809Db36e9a7E',
+      address: '0x814411684B5669D277093d48F2b2bb01bEA60255',
       abi: ClubContract.abi,
       signerOrProvider: signer || provider,
     });
@@ -57,7 +57,7 @@ const useClubContract = (signer: any, provider: any) => {
 
         const request: any = {
           chainId: 84531,
-          target: '0x380c81E277Eab198936DafC3F9A7DFfa7edb9430',
+          target: '0x814411684B5669D277093d48F2b2bb01bEA60255',
           data: data,
           user: await signer.getAddress(),
         };
@@ -86,7 +86,7 @@ const useClubContract = (signer: any, provider: any) => {
         // Populate a relay request
         const request: any = {
           chainId: 84531,
-          target: '0x380c81E277Eab198936DafC3F9A7DFfa7edb9430',
+          target: '0x814411684B5669D277093d48F2b2bb01bEA60255',
           data: data,
           user: await signer.getAddress(),
         };

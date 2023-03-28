@@ -26,12 +26,12 @@ type UpvoteProps = {
 const Upvote = ({ project, setUpvotes, setBalance, balance }: UpvoteProps) => {
   const [user, _]: any = useContext(UserContext);
   const votingContract = wagmi.useContract({
-    address: '0x93697e88337ee711C137752579A64C7d2D6dD122',
+    address: '0x409264387332E62D9AE9281F584A1B49f2611A1e',
     abi: VotingContract.abi,
     signerOrProvider: user?.signer,
   });
   const clubContract = wagmi.useContract({
-    address: '0xA5909B30b1267B36a93d2d3f6eB1809Db36e9a7E',
+    address: '0x814411684B5669D277093d48F2b2bb01bEA60255',
     abi: ClubContract.abi,
     signerOrProvider: user?.signer,
   });
@@ -54,14 +54,14 @@ const Upvote = ({ project, setUpvotes, setBalance, balance }: UpvoteProps) => {
     try {
       setIsLoading(true); // disable login button to prevent multiple emails from being triggered
       const { data: data2 } = await clubContract!.populateTransaction.approve(
-        '0x93697e88337ee711C137752579A64C7d2D6dD122',
+        '0x409264387332E62D9AE9281F584A1B49f2611A1e',
         makeBig(1)
       );
       console.log('data2', data2);
 
       const request: any = {
         chainId: 84531,
-        target: '0xA5909B30b1267B36a93d2d3f6eB1809Db36e9a7E',
+        target: '0x814411684B5669D277093d48F2b2bb01bEA60255',
         data: data2,
         user: await user.signer.getAddress(),
       };
@@ -94,7 +94,7 @@ const Upvote = ({ project, setUpvotes, setBalance, balance }: UpvoteProps) => {
 
             const request2: any = {
               chainId: 84531,
-              target: '0x93697e88337ee711C137752579A64C7d2D6dD122',
+              target: '0x409264387332E62D9AE9281F584A1B49f2611A1e',
               data: data,
               user: await user.signer.getAddress(),
             };

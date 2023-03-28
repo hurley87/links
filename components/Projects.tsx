@@ -13,7 +13,7 @@ const Projects = () => {
   const [projects, setProjects] = useState<any>([]);
   const contract = wagmi.useContract({
     // Add the address that was output from your deploy script
-    address: '0x93697e88337ee711C137752579A64C7d2D6dD122',
+    address: '0x409264387332E62D9AE9281F584A1B49f2611A1e',
     abi: VotingContract.abi,
     signerOrProvider: user?.provider,
   });

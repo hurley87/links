@@ -14,7 +14,7 @@ const CreateProject = () => {
   const [website, setWebsite] = useState('');
   const [description, setDescription] = useState('');
   const signerContract = wagmi.useContract({
-    address: '0x93697e88337ee711C137752579A64C7d2D6dD122',
+    address: '0x409264387332E62D9AE9281F584A1B49f2611A1e',
     abi: VotingContract.abi,
     signerOrProvider: user?.signer,
   });
@@ -52,7 +52,7 @@ const CreateProject = () => {
 
       const request: any = {
         chainId: 84531,
-        target: '0x93697e88337ee711C137752579A64C7d2D6dD122',
+        target: '0x409264387332E62D9AE9281F584A1B49f2611A1e',
         data: data,
         user: await user?.signer.getAddress(),
       };

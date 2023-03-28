@@ -9,9 +9,8 @@ const createGelato = () => {
       {
         domains: [window.location.origin],
         chain: {
-          id: 84531,
-          rpcUrl:
-            'https://fabled-proportionate-grass.base-goerli.quiknode.pro/43a2893a730d0ac6376b0fbd184c18c94d408504/',
+          id: 1442,
+          rpcUrl: 'https://rpc.public.zkevm-test.net',
         },
         ui: {
           theme: 'light',
