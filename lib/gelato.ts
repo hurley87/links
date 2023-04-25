@@ -11,7 +11,7 @@ const createGelato = () => {
         chain: {
           id: 84531,
           rpcUrl:
-            'https://fabled-proportionate-grass.base-goerli.quiknode.pro/43a2893a730d0ac6376b0fbd184c18c94d408504/',
+            'https://bitter-dawn-resonance.base-goerli.quiknode.pro/69f5a5c20a5360a50f9cad4657f82db552c0a41d',
         },
         ui: {
           theme: 'light',
