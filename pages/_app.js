@@ -9,7 +9,7 @@ import { Toaster } from 'react-hot-toast';
 import { ethers } from 'ethers';
 
 const provider = new providers.JsonRpcProvider(
-  'https://little-shy-feather.base-goerli.quiknode.pro/9ce46bdf099312e0e1cc22733b022d7f1455a600/',
+  'https://bitter-dawn-resonance.base-goerli.quiknode.pro/69f5a5c20a5360a50f9cad4657f82db552c0a41d',
   { name: 'base-goerli', chainId: 84531, ensAddress: undefined }
 );
 
